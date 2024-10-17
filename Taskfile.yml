@@ -1,0 +1,61 @@
+version: '3'
+
+interval: 200ms
+
+vars:
+  NAME: "site"
+  BIN_NAME: "{{.NAME}}"
+
+tasks:
+  default:
+    deps: [live]
+
+  tools:
+    cmds:
+      - go install github.com/go-task/task/v3/cmd/task@latest
+      - go install github.com/a-h/templ/cmd/templ@latest
+      - go install github.com/delaneyj/toolbelt/sqlc-gen-zombiezen@latest
+      - go install golang.org/x/tools/cmd/goimports@latest  
+
+
+  sqlc:
+    dir: sql
+    sources:
+      - "**/*.sql"
+      - "sqlc.yml"
+    cmds:
+      - sqlc generate
+      - goimports -w .
+
+  kill:
+    cmds:
+      - killall -q {{.BIN_NAME}}  || echo "Process was not running."
+      - killall -q air  || echo "Process was not running."
+
+  live:styles:
+    cmds:
+      - pnpx tailwindcss -c tailwind.config.js -i web/styles/styles.css -o static/index.css --watch
+
+  live:templ:
+    cmds:
+      - templ generate --watch -v
+
+  live:server:
+    deps:
+      - kill
+    cmds:
+      - |
+        go run github.com/air-verse/air@v1.52.3 \
+        --build.cmd "go build -tags dev -o tmp/bin/{{.BIN_NAME}} cmd/app/*.go" \
+        --build.bin "tmp/bin/{{.BIN_NAME}}" \
+        --build.delay "20" \
+        --build.exclude_dir "node_modules,data,public" \
+        --build.include_ext "go" \
+        --build.stop_on_error "false" \
+        --misc.clean_on_exit true
+
+  live:
+    deps:
+      - live:templ
+      - live:server
+      - live:styles

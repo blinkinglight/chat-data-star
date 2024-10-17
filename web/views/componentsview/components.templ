@@ -1,0 +1,20 @@
+package componentsview
+
+templ Card() {
+	<div class="card bg-base-100 w-96 shadow-xl flex">
+		<div class="card-body">
+		
+			{ children... }
+		</div>
+	</div>
+}
+
+templ CardTitle(text string) {
+    <h2 class="card-title">{text}</h2>
+}
+
+templ CardButton(text string) {
+	<div class="card-actions justify-end">
+		<button class="btn btn-primary">Buy Now</button>
+	</div>
+}

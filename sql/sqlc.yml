@@ -1,0 +1,27 @@
+version: "2"
+
+plugins:
+  - name: zz
+    process:
+      cmd: sqlc-gen-zombiezen
+
+sql:
+  - engine: "sqlite"
+    queries: "./queries"
+    schema: "./migrations"
+    codegen:
+      - out: zz
+        plugin: zz
+    # gen:
+    #   go:
+    #     package: "zz"
+    #     out: "zz"
+          
+
+# overrides:
+#   go:
+#     overrides:
+#       - column: "settings.vat"  # Explicitly set the `vat` column type
+#         go_type:
+#           type: "*string"
+        
