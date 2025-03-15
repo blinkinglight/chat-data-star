@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/delaneyj/datastar"
 	"github.com/gorilla/sessions"
 	"github.com/invopop/ctxi18n"
+	datastar "github.com/starfederation/datastar/sdk/go"
 )
 
 func Auth(sessionStore sessions.Store) func(h http.Handler) http.Handler {
@@ -28,7 +28,7 @@ func Auth(sessionStore sessions.Store) func(h http.Handler) http.Handler {
 			if session.Values["auth"] != true {
 				if r.Header.Get("Datastar-Request") == "true" {
 					sse := datastar.NewSSE(w, r)
-					datastar.Redirect(sse, "/login")
+					sse.Redirect("/login")
 				} else {
 					http.Redirect(w, r, "/login", http.StatusSeeOther)
 				}

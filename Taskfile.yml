@@ -34,7 +34,7 @@ tasks:
 
   live:styles:
     cmds:
-      - pnpx tailwindcss -c tailwind.config.js -i web/styles/styles.css -o static/index.css --watch
+      - pnpm exec tailwindcss -c tailwind.config.js -i web/styles/styles.css -o static/index.css --watch
 
   live:templ:
     cmds:
