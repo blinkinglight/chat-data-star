@@ -7,12 +7,12 @@ import (
 	"net/http"
 
 	"github.com/blinkinglight/chat-data-star/web/views/chatview"
-	"github.com/delaneyj/datastar"
 	"github.com/delaneyj/toolbelt"
 	"github.com/delaneyj/toolbelt/embeddednats"
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/sessions"
 	"github.com/nats-io/nats.go"
+	datastar "github.com/starfederation/datastar/sdk/go"
 )
 
 func SetupChat(router chi.Router, session sessions.Store, ns *embeddednats.Server) error {
@@ -60,7 +60,7 @@ func SetupChat(router chi.Router, session sessions.Store, ns *embeddednats.Serve
 
 		var state = Message{}
 
-		err = datastar.BodyUnmarshal(r, &state)
+		err = datastar.ReadSignals(r, &state)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -108,13 +108,13 @@ func SetupChat(router chi.Router, session sessions.Store, ns *embeddednats.Serve
 				var message = Message{}
 				err := json.Unmarshal(msg.Data, &message)
 				if err != nil {
-					datastar.Error(sse, err)
+					// datastar.Error(sse, err)
 					return
 				}
 				if message.Sender == "bot" {
-					datastar.RenderFragmentTempl(sse, chatview.Bot(message.Message), datastar.WithMergeAppend(), datastar.WithQuerySelector("#chatbox"))
+					sse.MergeFragmentTempl(chatview.Bot(message.Message), datastar.WithMergeAppend(), datastar.WithSelector("#chatbox"))
 				} else {
-					datastar.RenderFragmentTempl(sse, chatview.Me(message.Message), datastar.WithMergeAppend(), datastar.WithQuerySelector("#chatbox"))
+					sse.MergeFragmentTempl(chatview.Me(message.Message), datastar.WithMergeAppend(), datastar.WithSelector("#chatbox"))
 				}
 			}
 		}
