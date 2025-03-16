@@ -30,6 +30,7 @@ require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/CAFxX/httpcompression v0.0.9 // indirect
 	github.com/andybalholm/brotli v1.1.1 // indirect
+	github.com/benbjohnson/hashfs v0.2.2 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/chewxy/math32 v1.11.1 // indirect
 	github.com/delaneyj/gostar v0.8.0 // indirect
