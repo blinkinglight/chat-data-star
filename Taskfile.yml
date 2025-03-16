@@ -22,7 +22,24 @@ tasks:
 
   prod:
     cmds:
-      - GOOS={{.PROD_OS}} GOARCH={{.PROD_ARCH}} go build --tags prod -o dist/bin/{{.PROD_BIN}} cmd/app/*.go
+      - GOOS={{.PROD_OS}} GOARCH={{.PROD_ARCH}} go build -tags prod -o dist/bin/{{.PROD_BIN}} ./cmd/app
+    deps:
+      - build:templ
+      - build:styles
+      - sqlc
+
+  build:templ:
+    cmds:
+      - templ generate
+    sources:
+      - "**/*.templ"
+    generates:
+      - "**/*_templ.go"
+
+  build:styles:
+    cmds:
+      - pnpm i
+      - pnpm exec tailwindcss -c tailwind.config.js -i web/styles/styles.css -o static/index.css
 
   sqlc:
     dir: sql
@@ -53,7 +70,7 @@ tasks:
     cmds:
       - |
         go run github.com/air-verse/air@v1.52.3 \
-        --build.cmd "go build -tags dev -o tmp/bin/{{.BIN_NAME}} cmd/app/*.go" \
+        --build.cmd "go build -tags dev -o tmp/bin/{{.BIN_NAME}} ./cmd/app" \
         --build.bin "tmp/bin/{{.BIN_NAME}}" \
         --build.delay "20" \
         --build.exclude_dir "node_modules,data,public" \
