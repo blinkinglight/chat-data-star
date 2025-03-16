@@ -11,3 +11,7 @@ install dependencies
 start project
 
 `task live`
+
+
+production build
+`task prod` 
