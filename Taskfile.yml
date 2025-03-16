@@ -5,6 +5,9 @@ interval: 200ms
 vars:
   NAME: "site"
   BIN_NAME: "{{.NAME}}"
+  PROD_OS: "linux"
+  PROD_ARCH: "amd64"
+  PROD_BIN: "{{.NAME}}-{{.PROD_OS}}-{{.PROD_ARCH}}"
 
 tasks:
   default:
@@ -17,6 +20,9 @@ tasks:
       - go install github.com/delaneyj/toolbelt/sqlc-gen-zombiezen@latest
       - go install golang.org/x/tools/cmd/goimports@latest  
 
+  prod:
+    cmds:
+      - GOOS={{.PROD_OS}} GOARCH={{.PROD_ARCH}} go build --tags prod -o dist/bin/{{.PROD_BIN}} cmd/app/*.go
 
   sqlc:
     dir: sql
@@ -34,6 +40,7 @@ tasks:
 
   live:styles:
     cmds:
+      - pnpm i
       - pnpm exec tailwindcss -c tailwind.config.js -i web/styles/styles.css -o static/index.css --watch
 
   live:templ:

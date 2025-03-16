@@ -30,3 +30,4 @@ static/*
 .task
 node_modules
 sql/*.log
+dist
